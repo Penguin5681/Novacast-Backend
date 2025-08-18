@@ -1,0 +1,89 @@
+novacast-backend/
+│── src/
+│   ├── app.ts                
+│   ├── server.ts             
+│   │
+│   ├── config/               
+│   │   ├── env.ts
+│   │   ├── db.ts
+│   │   ├── kafka.ts
+│   │   ├── redis.ts
+│   │   └── logger.ts
+│   │
+│   ├── modules/              
+│   │   ├── auth/
+│   │   │   ├── auth.controller.ts
+│   │   │   ├── auth.routes.ts
+│   │   │   ├── auth.service.ts
+│   │   │   ├── auth.types.ts
+│   │   │   └── auth.middleware.ts
+│   │   │
+│   │   ├── users/
+│   │   │   ├── user.controller.ts
+│   │   │   ├── user.routes.ts
+│   │   │   ├── user.service.ts
+│   │   │   ├── user.model.ts
+│   │   │   └── user.types.ts
+│   │   │
+│   │   ├── streams/
+│   │   │   ├── stream.controller.ts
+│   │   │   ├── stream.routes.ts
+│   │   │   ├── stream.service.ts
+│   │   │   ├── stream.model.ts
+│   │   │   └── stream.types.ts
+│   │   │
+│   │   ├── chat/
+│   │   │   ├── chat.gateway.ts       
+│   │   │   ├── chat.service.ts
+│   │   │   └── chat.types.ts
+│   │   │
+│   │   ├── vods/
+│   │   │   ├── vod.controller.ts
+│   │   │   ├── vod.routes.ts
+│   │   │   ├── vod.service.ts
+│   │   │   ├── vod.model.ts
+│   │   │   └── vod.types.ts
+│   │   │
+│   │   ├── payments/
+│   │   │   ├── payment.controller.ts
+│   │   │   ├── payment.routes.ts
+│   │   │   ├── payment.service.ts
+│   │   │   └── payment.types.ts
+│   │   │
+│   │   └── events/
+│   │       ├── event.consumer.ts     
+│   │       ├── event.producer.ts     
+│   │       └── event.types.ts
+│   │
+│   ├── middleware/
+│   │   ├── errorHandler.ts
+│   │   ├── authGuard.ts
+│   │   └── rateLimiter.ts
+│   │
+│   ├── utils/
+│   │   ├── response.ts
+│   │   ├── validators.ts
+│   │   └── crypto.ts
+│   │
+│   ├── types/
+│   │   └── global.d.ts               
+│   │
+│   └── jobs/                         # Workers (FFmpeg, thumbnails, etc.)
+│       ├── thumbnail.worker.ts
+│       ├── vod.worker.ts
+│       └── moderation.worker.ts
+│
+├── prisma/                           # Prisma schema & migrations (if using Prisma)
+│   └── schema.prisma
+│
+├── tests/                            # Jest/Supertest for APIs
+│   ├── auth.test.ts
+│   ├── user.test.ts
+│   └── stream.test.ts
+│
+├── .env
+├── .env.example
+├── package.json
+├── tsconfig.json
+├── jest.config.js
+└── docker-compose.yml                # DB, Kafka, Redis, etc. for local dev
