@@ -8,6 +8,10 @@ import userValidationRoutes from './routes/users/user-validation.routes.ts';
 import { NODE_ENVIRONMENT } from "./config/env.ts";
 import fs from "fs";
 import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 
 const app = express();
@@ -35,16 +39,15 @@ if (NODE_ENVIRONMENT.isDev) {
   const logFormat =
     "🌐 :method :url | Status: :status | :response-time ms | IP: :remote-addr | Body: :body";
 
-  // if (process.env.WRITE_LOGS_TO_FILE) {
-  //   const logStream = fs.createWriteStream(
-  //     path.join(__dirname, "../logs/server.log.txt"),
-  //     { flags: "a" }
-  //   );
-  //   app.use(morgan(logFormat, { stream: logStream }));
-  // } else {
-  //   app.use(morgan(logFormat));
-  // }
+  if (process.env.WRITE_LOGS_TO_FILE) {
+    const logStream = fs.createWriteStream(
+      path.join(__dirname, "/logs/server.log.txt"),
+      { flags: "a" }
+    );
+    app.use(morgan(logFormat, { stream: logStream }));
+  } else {
     app.use(morgan(logFormat));
+  }
 
 }
 
