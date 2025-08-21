@@ -1,1 +1,1 @@
-export type TNodeEnv = "dev" | "prod";
+export type TNodeEnv = "dev" | "prod" | "test";

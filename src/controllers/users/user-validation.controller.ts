@@ -7,6 +7,13 @@ export const checkUsernameAvailability = async (
   res: Response
 ) => {
   const { username } = req.body;
+  
+  if (!username || typeof username !== 'string' || username.trim() === '') {
+    return res.status(400).json({
+      error: 'Username is required and must be a non-empty string'
+    });
+  }
+  
   try {
     const result = await pool.query(
       "SELECT username FROM users WHERE username = $1",
@@ -39,6 +46,13 @@ export const checkUsernameAvailability = async (
 
 export const checkEmailAvailability = async (req: Request, res: Response) => {
   const { email } = req.body;
+  
+  if (!email || typeof email !== 'string' || email.trim() === '') {
+    return res.status(400).json({
+      error: 'Email is required and must be a non-empty string'
+    });
+  }
+  
   try {
     const result = await pool.query(
       "SELECT email FROM users WHERE email = $1",
@@ -62,7 +76,7 @@ export const checkEmailAvailability = async (req: Request, res: Response) => {
       .status(500)
       .json({
         error:
-          "user-validation.controller.ts:65 checkEmailAvailability => Server Error => " +
+          "user-validation.controller.ts:62 checkEmailAvailability => Server Error => " +
           e,
       });
   }
