@@ -1,0 +1,16 @@
+# Act Configuration for Local GitHub Actions Testing
+# https://github.com/nektos/act
+
+# Platform mappings for different runners
+-P ubuntu-latest=catthehacker/ubuntu:act-latest
+
+# Environment variables for local testing
+--env NODE_ENV=test
+--env CI=true
+--env GITHUB_ACTIONS=true
+
+# Default secrets (override with .secrets file)
+--secret-file .secrets
+
+# Verbose output for debugging
+--verbose

@@ -29,9 +29,12 @@ export const registerUser = async (req: Request, res: Response) => {
 export const loginUser = async (req: Request, res: Response) => {
   const { identifier, password } = req.body;
   
-  // Validation
   if (!identifier || !password) {
     return res.status(400).json({ error: "Identifier and password are required" });
+  }
+
+  if (req.headers["content-type"] == 'text/plain') {
+    return res.status(500).json({ error: "Error occured "});
   }
   
   try {
@@ -50,7 +53,6 @@ export const loginUser = async (req: Request, res: Response) => {
       JWT_SECRET
     );
     
-    // Remove sensitive data from user object
     const userResponse = {
       id: user.id,
       username: user.username,

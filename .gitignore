@@ -13,6 +13,10 @@ yarn-error.log*
 dist/
 build/
 coverage/
+*.d.ts
+*.d.ts.map
+*.js
+*.js.map
 
 # IDE files
 .idea/

@@ -56,13 +56,11 @@ describe('User Validation Controller', () => {
       test('should handle case sensitivity correctly', async () => {
         const user = await insertTestUser({ username: 'TestUser123' });
 
-        // Test with different case
         const response = await request(app)
           .post('/username-check')
           .send({ username: 'testuser123' });
 
         expectSuccess(response);
-        // Should return available if case-sensitive, unavailable if case-insensitive
         expect(response.body).toHaveProperty('username', 'testuser123');
         expect(response.body).toHaveProperty('exists');
         expect(response.body).toHaveProperty('available');
@@ -76,7 +74,6 @@ describe('User Validation Controller', () => {
           .post('/username-check')
           .send({});
 
-        // Should handle gracefully
         expect([400, 500]).toContain(response.status);
       });
 
@@ -85,7 +82,6 @@ describe('User Validation Controller', () => {
           .post('/username-check')
           .send({ username: null });
 
-        // Should handle gracefully
         expect([400, 500]).toContain(response.status);
       });
 
@@ -94,7 +90,6 @@ describe('User Validation Controller', () => {
           .post('/username-check')
           .send({ username: undefined });
 
-        // Should handle gracefully
         expect([400, 500]).toContain(response.status);
       });
 
@@ -152,7 +147,6 @@ describe('User Validation Controller', () => {
         expectSuccess(response);
         expect(response.body.username).toBe(maliciousUsername);
 
-        // Verify table still exists
         const result = await testPool.query('SELECT COUNT(*) FROM users');
         expect(result.rows).toBeDefined();
       });
@@ -290,7 +284,6 @@ describe('User Validation Controller', () => {
             .post('/email-check')
             .send({ email });
 
-          // Should still process the request even with invalid format
           expectSuccess(response);
           expect(response.body.email).toBe(email);
         }
@@ -341,7 +334,6 @@ describe('User Validation Controller', () => {
         expectSuccess(response);
         expect(response.body.email).toBe(maliciousEmail);
 
-        // Verify table still exists
         const result = await testPool.query('SELECT COUNT(*) FROM users');
         expect(result.rows).toBeDefined();
       });
@@ -395,7 +387,6 @@ describe('User Validation Controller', () => {
     test('should work together correctly', async () => {
       const userData = generateTestUser();
 
-      // Check both username and email should be available
       const usernameResponse = await request(app)
         .post('/username-check')
         .send({ username: userData.username });
@@ -407,10 +398,8 @@ describe('User Validation Controller', () => {
       expect(usernameResponse.body.available).toBe(true);
       expect(emailResponse.body.available).toBe(true);
 
-      // Insert user
       await insertTestUser(userData);
 
-      // Now both should be unavailable
       const usernameResponse2 = await request(app)
         .post('/username-check')
         .send({ username: userData.username });
@@ -426,7 +415,6 @@ describe('User Validation Controller', () => {
     test('should handle bulk validation requests', async () => {
       const testData = Array.from({ length: 5 }, () => generateTestUser());
       
-      // Check all are available
       const initialChecks = await Promise.all([
         ...testData.map(data => request(app).post('/username-check').send({ username: data.username })),
         ...testData.map(data => request(app).post('/email-check').send({ email: data.email }))
@@ -437,10 +425,8 @@ describe('User Validation Controller', () => {
         expect(response.body.available).toBe(true);
       });
 
-      // Insert users
       await Promise.all(testData.map(data => insertTestUser(data)));
 
-      // Check all are now unavailable
       const finalChecks = await Promise.all([
         ...testData.map(data => request(app).post('/username-check').send({ username: data.username })),
         ...testData.map(data => request(app).post('/email-check').send({ email: data.email }))
@@ -456,7 +442,6 @@ describe('User Validation Controller', () => {
       const iterations = 10;
       const userData = generateTestUser();
 
-      // Run multiple checks concurrently before user exists
       const preChecks = await Promise.all(
         Array.from({ length: iterations }, () => Promise.all([
           request(app).post('/username-check').send({ username: userData.username }),
@@ -464,16 +449,13 @@ describe('User Validation Controller', () => {
         ]))
       );
 
-      // All should be available
       preChecks.flat().forEach(response => {
         expectSuccess(response);
         expect(response.body.available).toBe(true);
       });
 
-      // Insert user
       await insertTestUser(userData);
 
-      // Run multiple checks concurrently after user exists
       const postChecks = await Promise.all(
         Array.from({ length: iterations }, () => Promise.all([
           request(app).post('/username-check').send({ username: userData.username }),
@@ -481,7 +463,6 @@ describe('User Validation Controller', () => {
         ]))
       );
 
-      // All should be unavailable
       postChecks.flat().forEach(response => {
         expectSuccess(response);
         expect(response.body.available).toBe(false);
