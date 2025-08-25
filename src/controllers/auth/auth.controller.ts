@@ -33,8 +33,7 @@ export const loginUser = async (req: Request, res: Response) => {
     return res.status(400).json({ error: "Identifier and password are required" });
   }
 
-  if (req.headers["content-type"] == 'text/plain') {
-    return res.status(500).json({ error: "Error occured "});
+    return res.status(400).json({ error: "Unsupported content type"});
   }
   
   try {
