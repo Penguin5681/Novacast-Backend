@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "rootDir": "./build-temp",
+    "outDir": "./dist",
+    "declaration": true,
+    "sourceMap": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true
+  },
+  "include": [
+    "build-temp/**/*"
+  ],
+  "exclude": [
+    "build-temp/__tests__/**/*",
+    "**/*.test.ts",
+    "**/*.spec.ts"
+  ]
+}

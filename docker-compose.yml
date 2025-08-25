@@ -1,0 +1,112 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database for Local Development
+  postgres-dev:
+    image: postgres:14-alpine
+    container_name: novacast-postgres-dev
+    environment:
+      POSTGRES_USER: novacast_user
+      POSTGRES_PASSWORD: novacast_pass
+      POSTGRES_DB: novacast_dev
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+      - ./scripts/init-dev-db.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - novacast-local
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U novacast_user -d novacast_dev"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # PostgreSQL Database for Testing
+  postgres-test:
+    image: postgres:14-alpine
+    container_name: novacast-postgres-test
+    environment:
+      POSTGRES_USER: testuser
+      POSTGRES_PASSWORD: testpass
+      POSTGRES_DB: novacast_test
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_test_data:/var/lib/postgresql/data
+    networks:
+      - novacast-local
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U testuser -d novacast_test"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend Application - Development Mode
+  backend-dev:
+    build:
+      context: .
+      target: development
+    container_name: novacast-backend-dev
+    environment:
+      NODE_ENV: development
+      LOCAL_DATABASE_URL: postgres://novacast_user:novacast_pass@postgres-dev:5432/novacast_dev
+      JWT_SECRET: local-dev-secret-key-change-in-production
+      PORT: 5001
+      WRITE_LOGS_TO_FILE: true
+    ports:
+      - "5001:5001"
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - ./logs:/app/logs
+    depends_on:
+      postgres-dev:
+        condition: service_healthy
+    networks:
+      - novacast-local
+    command: npm run dev
+
+  # Backend Application - Production Mode (for testing)
+  backend-prod:
+    build:
+      context: .
+      target: production
+    container_name: novacast-backend-prod
+    environment:
+      NODE_ENV: production
+      LOCAL_DATABASE_URL: postgres://novacast_user:novacast_pass@postgres-dev:5432/novacast_dev
+      JWT_SECRET: local-prod-secret-key-change-in-production
+      PORT: 5001
+      WRITE_LOGS_TO_FILE: true
+    ports:
+      - "5002:5001"
+    depends_on:
+      postgres-dev:
+        condition: service_healthy
+    networks:
+      - novacast-local
+    profiles:
+      - production
+
+  # Redis for Caching (optional, for future use)
+  redis:
+    image: redis:7-alpine
+    container_name: novacast-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - novacast-local
+    profiles:
+      - cache
+
+volumes:
+  postgres_dev_data:
+  postgres_test_data:
+  redis_data:
+
+networks:
+  novacast-local:
+    driver: bridge

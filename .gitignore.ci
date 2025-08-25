@@ -1,0 +1,38 @@
+# GitIgnore for Local CI/CD
+# Add these entries to your .gitignore
+
+# Act (GitHub Actions local runner)
+.secrets
+.act_secrets
+
+# Local environment files
+.env.local
+.env.development
+.env.staging
+
+# Docker volumes
+postgres_dev_data/
+postgres_test_data/
+redis_data/
+
+# Act artifacts and cache
+/tmp/act-artifacts/
+.actrc.local
+
+# Local CI/CD logs
+ci-logs/
+act-logs/
+
+# Coverage reports (if you want to keep them local)
+coverage/
+
+# Local development Docker images
+*.tar.gz
+
+# VS Code settings (optional)
+.vscode/settings.json
+.vscode/launch.json
+
+# Local database dumps
+*.sql.gz
+*.dump
