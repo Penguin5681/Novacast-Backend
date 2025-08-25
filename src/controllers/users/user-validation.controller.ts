@@ -97,13 +97,13 @@ export const checkHandleAvailability = async (req: Request, res: Response) => {
 
     if (NODE_ENVIRONMENT.isDev) {
       console.log("user-validation.controller.ts:98 checkHandleAvailability => " + exists);
-
-      res.json({
-        handle,
-        exists,
-        available: !exists,
-      });
     }
+
+    res.json({
+      handle,
+      exists,
+      available: !exists,
+    });
   } catch (err) {
     res
       .status(500)
